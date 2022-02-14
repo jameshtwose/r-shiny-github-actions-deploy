@@ -1,33 +1,35 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/master/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+name: Run on push master, main
+
+# Controls when the action will run. 
 on:
+  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [main, master]
+    branches: [ main, master ]
 
-name: shiny-deploy
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  shiny-deploy:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: Ubuntu-20.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-pandoc@v1
-
-      - uses: r-lib/actions/setup-r@v1
-        with:
-          use-public-rspm: true
-
-      - uses: r-lib/actions/setup-renv@v1
-
-      - name: Install rsconnect
-        run: install.packages("rsconnect")
-        shell: Rscript {0}
-
-      - name: Authorize and deploy app
-        run: |
-          rsconnect::setAccountInfo(${{ secrets.RSCONNECT_USER }}, ${{ secrets.RSCONNECT_TOKEN }}, ${{ secrets.RSCONNECT_SECRET }})
-          rsconnect::deployApp()
-        shell: Rscript {0}
+      # build the docker image and give it the name main
+      - name: Build image
+        run: docker build -t main . 
+      # run the docker image supply the secrets from the github secrets store.  
+      - name: execute
+        run: >
+          docker run 
+          -e SHINY_ACC_NAME=${{ secrets.SHINY_ACC_NAME }} 
+          -e TOKEN=${{secrets.TOKEN}} 
+          -e SECRET=${{secrets.SECRET}} 
+          -e MASTERNAME=${{secrets.MASTER_NAME}} 
+          main
