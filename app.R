@@ -2,6 +2,9 @@ library(shiny)
 library(plotly)
 library(shinythemes)
 
+options(shiny.host = '0.0.0.0')
+options(shiny.port = 5000)
+
 ui <- fluidPage(
   theme = shinytheme("darkly"),
   headerPanel('Plotting MT Cars data using plotly'),

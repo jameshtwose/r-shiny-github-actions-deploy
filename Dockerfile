@@ -5,13 +5,15 @@ RUN R -e 'install.packages(c(\
               "shiny", \
               "shinythemes", \
               "plotly", \
+              "dotenv", \
               "rsconnect"), \
             repos="https://packagemanager.rstudio.com/cran/__linux__/focal/2021-04-23"\
           )'
 WORKDIR /home/shinyusr
 COPY app.R app.R 
-COPY deploy.R deploy.R
-CMD Rscript deploy.R
+# COPY deploy.R deploy.R
+# CMD Rscript deploy.R
+CMD Rscript app.R
 
 # # get shiny server and R from the rocker project
 # FROM rocker/shiny:4.0.5
