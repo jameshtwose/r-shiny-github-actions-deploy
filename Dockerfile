@@ -11,8 +11,8 @@ RUN R -e 'install.packages(c(\
           )'
 WORKDIR /home/shinyusr
 COPY app.R app.R 
-# COPY deploy.R deploy.R
-# CMD Rscript deploy.R
+COPY deploy.R deploy.R
+CMD Rscript deploy.R
 CMD Rscript app.R
 
 # # get shiny server and R from the rocker project
